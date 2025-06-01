@@ -1,0 +1,9 @@
+fastapi
+beautifulsoup4
+uvicorn 
+python-dotenv
+requests
+redis
+passlib
+python-jose[cryptography]
+sqlalchemy

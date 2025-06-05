@@ -4,6 +4,7 @@ uvicorn
 python-dotenv
 requests
 redis
+celery
 passlib
 python-jose[cryptography]
 sqlalchemy

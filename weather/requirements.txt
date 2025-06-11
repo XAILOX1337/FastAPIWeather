@@ -8,3 +8,9 @@ celery
 passlib
 python-jose[cryptography]
 sqlalchemy
+httpx
+datetime
+databases
+pyjwt
+passlib[bcrypt]
+python-multipart

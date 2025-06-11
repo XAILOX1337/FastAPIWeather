@@ -8,6 +8,8 @@ import httpx
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
+
 async def fetch_currency_rates(currency: str):
     url = f"https://www.cbr-xml-daily.ru/daily_json.js"
     response = requests.get(url).json()

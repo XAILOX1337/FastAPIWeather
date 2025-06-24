@@ -5,7 +5,8 @@ from .database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('users_id_seq'), primary_key=True)
+    username = Column(String, unique=True)
     email = Column(String, unique=True)
     hashed_password = Column(String)
 

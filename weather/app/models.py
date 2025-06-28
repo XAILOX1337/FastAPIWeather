@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Float, Date, Sequence
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 from .database import Base
+from pydantic import BaseModel
 
 class User(Base):
     __tablename__ = "users"
@@ -28,3 +29,18 @@ class Currencies(Base):
     currency = Column(String, nullable=False)
     rate = Column(Float, nullable=False)
     date = Column(Date, default=datetime.now().date(), nullable=False)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+
+
+class UserInDB(User):
+    hashed_password: Mapped[str] = mapped_column(use_existing_column=True)

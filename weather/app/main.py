@@ -10,19 +10,24 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from contextlib import asynccontextmanager
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
-import jwt
+import redis
+from fastapi_cache.backends.redis import RedisBackend
+
+from fastapi_cache.decorator import cache, FastAPICache
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from .services.auth import *
 
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    
+    Redis = redis.from_url("redis://localhost")
+    FastAPICache.init(RedisBackend(Redis), prefix="fastapi-cache")
     await create_tables()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -30,6 +35,7 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
+
 
 @app.post("/create_user")
 async def CreateUser(username: str, email: str, password: str, db: AsyncSession = Depends(get_db)):
@@ -74,11 +80,13 @@ async def read_own_items(
 
 
 @app.get("/weather/{city}")
+@cache(expire=600)
 async def weather(city: str):
     return await get_weather(city)
 
 
 @app.get("/currencies/{currency}")
+@cache(expire=600)
 async def currency_rates(currency):
     return await fetch_currency_rates(currency)
 
